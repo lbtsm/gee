@@ -1,6 +1,7 @@
 package gee
 
 import (
+	"log"
 	"net/http"
 	"strings"
 )
@@ -86,6 +87,10 @@ func (r *router) handle(c *Context) {
 		c.UrlParams = params
 		// todo 这里这种拼接字符串的方式，是否会影响效率
 		key := c.Method + "-" + c.Path
+		for k := range r.handlers {
+			log.Println(k, "------", r.handlers[k])
+		}
+		log.Println(key, "-------------- ", r.handlers[key])
 		r.handlers[key](c)
 	} else {
 		// todo ready 404 handler

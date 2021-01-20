@@ -1,7 +1,6 @@
 package gee
 
 import (
-	"log"
 	"strings"
 )
 
@@ -46,7 +45,6 @@ func (n *node) insert(path string, parts []string, index int) {
 		}
 		n.children = append(n.children, child) // 只需要在child==nil的情况下添加
 	}
-	log.Println("insert ----------------  ", part, index+1)
 	child.insert(path, parts, index+1)
 }
 

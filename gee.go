@@ -5,33 +5,22 @@ import "net/http"
 type HandlerFunc func(ctx *Context)
 
 type Engine struct {
-	router *router
+	*RouterGroup // 匿名继承
+	router       *router
+	groups       []*RouterGroup // store all routeGroup
 }
 
 func New() *Engine {
-	return &Engine{
+	e := &Engine{
 		router: newRouter(),
+		groups: make([]*RouterGroup, 0),
 	}
-}
-
-func (e *Engine) Get(path string, handler HandlerFunc) {
-	e.router.addRoute(http.MethodGet, path, handler)
-}
-
-func (e *Engine) Post(path string, handler HandlerFunc) {
-	e.router.addRoute(http.MethodPost, path, handler)
-}
-
-func (e *Engine) Delete(path string, handler HandlerFunc) {
-	e.router.addRoute(http.MethodDelete, path, handler)
-}
-
-func (e *Engine) Put(path string, handler HandlerFunc) {
-	e.router.addRoute(http.MethodPut, path, handler)
-}
-
-func (e *Engine) Option(path string, handler HandlerFunc) {
-	e.router.addRoute(http.MethodOptions, path, handler)
+	e.RouterGroup = &RouterGroup{
+		basePath:   "/", // 这里减少使用group时，
+		engine:     e,
+		middleware: make([]HandlerFunc, 0),
+	}
+	return e
 }
 
 func (e *Engine) Run(port string) error {

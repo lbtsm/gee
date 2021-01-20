@@ -14,6 +14,7 @@ func (rg *RouterGroup) Group(prefix string) *RouterGroup {
 		middleware: make([]HandlerFunc, 0),
 		engine:     rg.engine,
 	}
+	rg.engine.groups = append(rg.engine.groups, g)
 	return g
 }
 

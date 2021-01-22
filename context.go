@@ -18,14 +18,19 @@ type Context struct {
 	Path, Method string
 	StatusCode   int
 	UrlParams    map[string]string
+	// 自定义的中间件
+	handlers []HandlerFunc
+	index    int
 }
 
 func newContext(w http.ResponseWriter, r *http.Request) *Context {
 	return &Context{
-		writer:  w,
-		request: r,
-		Path:    r.URL.Path,
-		Method:  r.Method,
+		writer:   w,
+		request:  r,
+		Path:     r.URL.Path,
+		Method:   r.Method,
+		handlers: make([]HandlerFunc, 0),
+		index:    -1,
 	}
 }
 
@@ -72,4 +77,11 @@ func (c *Context) String(data string) (int, error) {
 func (c *Context) UrlParam(key string) (bool, string) {
 	value, ok := c.UrlParams[key]
 	return ok, value
+}
+
+func (c *Context) Next() {
+	c.index++
+	for ; c.index < len(c.handlers); c.index++ {
+		c.handlers[c.index](c)
+	}
 }

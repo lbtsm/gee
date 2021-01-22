@@ -1,6 +1,10 @@
 package gee
 
-import "net/http"
+import (
+	"log"
+	"net/http"
+	"path"
+)
 
 type RouterGroup struct {
 	basePath   string        // api分组前缀
@@ -18,8 +22,8 @@ func (rg *RouterGroup) Group(prefix string) *RouterGroup {
 	return g
 }
 
-func (rg *RouterGroup) addRoute(method, path string, handler HandlerFunc) {
-	fullPath := rg.basePath + path
+func (rg *RouterGroup) addRoute(method, route string, handler HandlerFunc) {
+	fullPath := path.Join(rg.basePath, route)
 	rg.engine.router.addRoute(method, fullPath, handler)
 }
 
@@ -41,4 +45,9 @@ func (rg *RouterGroup) Put(path string, handler HandlerFunc) {
 
 func (rg *RouterGroup) Option(path string, handler HandlerFunc) {
 	rg.addRoute(http.MethodOptions, path, handler)
+}
+
+func (rg *RouterGroup) Use(middleware ...HandlerFunc) {
+	rg.middleware = append(rg.middleware, middleware...)
+	log.Println("++++++++ ", rg.middleware, len(rg.middleware))
 }

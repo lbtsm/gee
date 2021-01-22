@@ -1,7 +1,6 @@
 package gee
 
 import (
-	"log"
 	"net/http"
 	"strings"
 )
@@ -11,7 +10,7 @@ import (
 */
 type router struct {
 	roots    map[string]*node
-	handlers map[string]HandlerFunc
+	handlers map[string]HandlerFunc // gin框架对应的value是handlerFunc的切片
 }
 
 func newRouter() *router {
@@ -87,11 +86,8 @@ func (r *router) handle(c *Context) {
 		c.UrlParams = params
 		// todo 这里这种拼接字符串的方式，是否会影响效率
 		key := c.Method + "-" + c.Path
-		for k := range r.handlers {
-			log.Println(k, "------", r.handlers[k])
-		}
-		log.Println(key, "-------------- ", r.handlers[key])
-		r.handlers[key](c)
+		c.handlers = append(c.handlers, r.handlers[key])
+		c.Next()
 	} else {
 		// todo ready 404 handler
 		c.Status(http.StatusNotFound)

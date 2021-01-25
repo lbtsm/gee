@@ -1,14 +1,13 @@
 package gee
 
 import (
-	"log"
 	"net/http"
 	"path"
 )
 
 type RouterGroup struct {
 	basePath   string        // api分组前缀
-	middleware []HandlerFunc // 中间间支持，这个是group最重要的一个功能
+	middleware []HandlerFunc // 中间间支持，这个是group最重要的一个功能，todo 在中间件中，有些请求其实是没有必要去进行中间件函数执行的，例如健康检查
 	engine     *Engine
 }
 
@@ -49,5 +48,4 @@ func (rg *RouterGroup) Option(path string, handler HandlerFunc) {
 
 func (rg *RouterGroup) Use(middleware ...HandlerFunc) {
 	rg.middleware = append(rg.middleware, middleware...)
-	log.Println("++++++++ ", rg.middleware, len(rg.middleware))
 }

@@ -1,7 +1,6 @@
 package gee
 
 import (
-	"log"
 	"net/http"
 	"strings"
 )
@@ -39,9 +38,7 @@ func (e *Engine) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	c := newContext(w, r) // gin框架在这里创建context是通过sync.Pool中获取的
 	// 根结点的路由集合，绑定的中间件
 	middles := make([]HandlerFunc, len(e.RouterGroup.middleware))
-	log.Println(" -------------------- ", e.RouterGroup.middleware, len(e.RouterGroup.middleware))
 	copy(middles, e.RouterGroup.middleware)
-	log.Println(" -------------------- ", middles, len(middles))
 	// 组织各种中间件
 	for _, group := range e.groups {
 		// 匹配对应的 group
